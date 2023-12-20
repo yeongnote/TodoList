@@ -7,12 +7,12 @@
 
 import UIKit
 
-@objc protocol KeyboardManaging {
-    func doneButtonAction()
-}
 
-class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, KeyboardManaging {
+
+class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+   
+    @IBOutlet weak var subTitle: UILabel!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var addButton: UIButton!
@@ -27,16 +27,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.dataSource = self
         tableView.delegate = self
         
-        
         // 키보드 외 다른 터치로 키보드 감추기
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
         view.addGestureRecognizer(tapGesture)
         
-        // Done 버튼을 텍스트 필드에 추가
-        textField.addTarget(self, action: #selector(textFieldEditingDidEnd), for: .editingDidEndOnExit)
-        
-        // Done 버튼을 텍스트 필드에 추가
-        textField.inputAccessoryView = UIView()
     }
     
     @objc func hideKeyboard() {
@@ -71,7 +65,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // 텍스트 필드 초기화
         textField.text = nil
         
+        textField.autocorrectionType = .no
+        textField.spellCheckingType = .no
     }
+    
     
     // UITableViewDataSource Methods
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -84,9 +81,43 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         return cell
     }
     
-    @objc func doneButtonAction() {
-        hideKeyboard()
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        showDeleteAlert(for: indexPath.row)
     }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let delteAction = UIContextualAction(style: .destructive, title: "삭제") { [weak self] (_, _, completion) in
+            self?.showDeleteAlert(for: indexPath.row)
+            completion(true)
+        }
+        
+        let swipeConfig = UISwipeActionsConfiguration(actions: [delteAction])
+        return swipeConfig
+    }
+    // 리스트 삭제 확인 창 표시
+    func showDeleteAlert(for index: Int) {
+        let alertController = UIAlertController(title: "삭제 확인", message: "이 항목을 삭제하시겠습니까?", preferredStyle: .alert)
+        
+        let okAction = UIAlertAction(title: "확인", style: .destructive) { [weak self] _ in
+            // "확인" 클릭 시 동작
+            self?.deleteItem(at: index)
+        }
+        
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        
+        alertController.addAction(okAction)
+        alertController.addAction(cancelAction)
+        
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    // 리스트 삭제 메서드
+    func deleteItem(at index: Int) {
+        list.remove(at: index)
+        tableView.reloadData()
+    }
+    
+    
 }
 
 
