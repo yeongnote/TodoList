@@ -17,17 +17,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var addButton: UIButton!
     
-    
+    // 할 일 목록을 저장하는 배열
     var list: [String] = ["첫 번째 리스트", "두 번째 리스트", "세 번째 리스트"]
     
-    //let keyboardManager = KeyboardManager()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        // 테이블 뷰의 데이터 소스와 델리게이트를 현재 ViewController로 설정
         tableView.dataSource = self
         tableView.delegate = self
         
-        // 키보드 외 다른 터치로 키보드 감추기
+        // 키보드 외 다른 터치로 키보드 감추기 위한 제스처 추가
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
         view.addGestureRecognizer(tapGesture)
         
@@ -111,7 +112,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         present(alertController, animated: true, completion: nil)
     }
     
-    // 리스트 삭제 메서드
+    // 리스트에서 특정 항목 삭제
     func deleteItem(at index: Int) {
         list.remove(at: index)
         tableView.reloadData()
