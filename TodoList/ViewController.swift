@@ -7,7 +7,10 @@
 
 import UIKit
 
-
+struct Todo {
+    var title: String
+    var isCompleted: Bool
+}
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -17,8 +20,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var addButton: UIButton!
     
+    
     // 할 일 목록을 저장하는 배열
-    var list: [String] = ["첫 번째 리스트", "두 번째 리스트", "세 번째 리스트"]
+    var list: [Todo] = [
+        Todo(title: "첫 번째 리스트", isCompleted: false),
+        Todo(title: "두 번째 리스트", isCompleted: false),
+        Todo(title: "세 번째 리스트", isCompleted: false)
+    ]
     
     
     
@@ -59,7 +67,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
         
         // 새로운 아이템을 리스트에 추가
-        list.append(newText)
+        list.append(Todo(title: newText, isCompleted: false))
         
         // 리스트 추가시 테이블 뷰 리로드
         tableView.reloadData()
@@ -78,7 +86,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        cell.textLabel?.text = list[indexPath.row]
+        let todo = list[indexPath.row]
+        
+        //가로선 추가
+        let attributedTitle = NSAttributedString(
+            string: todo.title,
+            attributes: todo.isCompleted ? [.strikethroughStyle: NSUnderlineStyle.single.rawValue] : [:]
+        )
+        
+        cell.textLabel?.attributedText = attributedTitle
         return cell
     }
     
@@ -118,6 +134,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.reloadData()
     }
     
+    @IBAction func toggleCompletion(_ sender: Any) {
+            // 선택된 행의 Todo의 완료 상태를 토글
+            if let cell = (sender as AnyObject).superview??.superview as? UITableViewCell,
+               let indexPath = tableView.indexPath(for: cell) {
+
+                list[indexPath.row].isCompleted.toggle()
+                tableView.reloadRows(at: [indexPath], with: .none)
+            }
+        }
     
 }
 
