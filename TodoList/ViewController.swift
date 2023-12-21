@@ -135,14 +135,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     @IBAction func toggleCompletion(_ sender: Any) {
-            // 선택된 행의 Todo의 완료 상태를 토글
-            if let cell = (sender as AnyObject).superview??.superview as? UITableViewCell,
-               let indexPath = tableView.indexPath(for: cell) {
-
-                list[indexPath.row].isCompleted.toggle()
-                tableView.reloadRows(at: [indexPath], with: .none)
-            }
+        // 선택된 행의 Todo의 완료 상태를 토글
+        if let cell = (sender as AnyObject).superview??.superview as? UITableViewCell,
+           let indexPath = tableView.indexPath(for: cell) {
+            
+            list[indexPath.row].isCompleted.toggle()
+            tableView.reloadRows(at: [indexPath], with: .none)
         }
+    }
     
 }
 
